@@ -5,14 +5,12 @@
 
 #include "chords.h"
 
-const char *parse_chords_error = NULL;
-
 static char *read_file(const char *path)
 {
 	FILE *f = fopen(path, "r");
 	if (f == NULL)
 	{
-		parse_chords_error = strerror(errno);
+		perror("fopen()");
 		return NULL;
 	}
 
@@ -55,7 +53,7 @@ static int *parse_line(char *line)
 
 		if (errno != 0)
 		{
-			parse_chords_error = strerror(errno);
+			perror("strtol()");
 			free(chord);
 			return NULL;
 		}

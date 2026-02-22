@@ -1,4 +1,4 @@
-CFLAGS	:=	$(shell pkg-config --cflags jack) -MMD
+CFLAGS	:=	$(shell pkg-config --cflags jack) -MMD -O0 -g -Wno-cpp
 LDFLAGS	:=	$(shell pkg-config --libs jack)
 SOURCES	:=	$(wildcard *.c)
 OBJECTS	:=	$(SOURCES:%.c=%.o)
