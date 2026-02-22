@@ -49,8 +49,7 @@ void osc_encode(struct buf *buf, const char *addr, ...)
 done:
 	va_end(ap);
 
-	unsigned char zero = 0;
-	buf_append(&tag, &zero, 1);
+	buf_append1(&tag, 0);
 	buf_zalign(&tag, 4);
 
 	buf_append(buf, tag.data, tag.size);

@@ -26,6 +26,11 @@ void buf_append(struct buf *buf, const void *data, size_t size)
 	buf->size += size;
 }
 
+void buf_append1(struct buf *buf, unsigned char x)
+{
+	buf_append(buf, &x, 1);
+}
+
 void buf_free(struct buf *buf)
 {
 	free(buf->data);

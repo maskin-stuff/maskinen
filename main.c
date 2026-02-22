@@ -1,33 +1,34 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 
 #include "buf.h"
 #include "udp.h"
 #include "osc.h"
+#include "parse.h"
+#include "gen.h"
 
 int main(int argc, char **argv)
 {
 	struct buf buf = buf_init();
 
-	struct udp_sock *us = udp_init("127.0.0.1", 3819);
-	assert(us);
+	char c;
+	while ((c = fgetc(stdin)) != EOF)
+	{
+		buf_append1(&buf, c);
+	}
 
-	osc_encode(
-		&buf,
-		"/my/message",
-		OSC_INTEGER, 123,
-		OSC_STRING, "yoyoyo",
-		OSC_INTEGER, 420,
-		OSC_EOL
-	);
+	struct ast *ast = parse(buf.data, buf.size);
 
-	assert(udp_send(us, &buf) == 0);
+	if (ast == NULL)
+	{
+		parse_print_error(stderr);
+		exit(EXIT_FAILURE);
+	}
 
-	udp_free(us);
+	buf_reset(&buf);
+	assert(gen(&buf, ast) == 0);
+	buf_append1(&buf, 0);
 
-	FILE *f = popen("hexdump -C", "w");
-	fwrite(buf.data, 1, buf.size, f);
-	pclose(f);
-
-	buf_free(&buf);
+	printf("%s\n", (const char *) buf.data);
 }
