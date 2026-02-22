@@ -3,12 +3,15 @@
 
 #include <stddef.h>
 
-enum osc_type {
+#include "buf.h"
+
+enum osc_type
+{
 	OSC_EOL = -1,
 	OSC_INTEGER = 0,
 	OSC_STRING,
 };
 
-size_t osc_encode(unsigned char *buf, const char *addr, ...);
+void osc_encode(struct buf *buf, const char *addr, ...);
 
 #endif

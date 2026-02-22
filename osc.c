@@ -5,21 +5,14 @@
 
 #include "osc.h"
 
-size_t osc_encode(unsigned char *buf, const char *addr, ...)
+void osc_encode(struct buf *buf, const char *addr, ...)
 {
-	unsigned char tag[4096] = ",";
-	size_t tag_size = 1;
+	struct buf tag = buf_init();
+	struct buf args = buf_init();
 
-	unsigned char args[4096];
-	size_t args_size = 0;
-
-	size_t addr_size = strlen(addr) + 1;
-	memcpy(buf, addr, addr_size);
-
-	while (addr_size % 4 != 0)
-	{
-		buf[addr_size++] = 0;
-	}
+	buf_append(&tag, ",", 1);
+	buf_append(buf, addr, strlen(addr) + 1);
+	buf_zalign(buf, 4);
 
 	va_list ap;
 	va_start(ap, addr);
@@ -36,26 +29,16 @@ size_t osc_encode(unsigned char *buf, const char *addr, ...)
 			goto done;
 
 		case OSC_INTEGER:
-			tag[tag_size++] = 'i';
-
+			buf_append(&tag, "i", 1);
 			num = htonl(va_arg(ap, int));
-			memcpy(&args[args_size], &num, sizeof num);
-			args_size += sizeof num;
-
+			buf_append(&args, &num, sizeof num);
 			break;
 
 		case OSC_STRING:
-			tag[tag_size++] = 's';
-
+			buf_append(&tag, "s", 1);
 			str = va_arg(ap, const char *);
-			memcpy(&args[args_size], str, strlen(str) + 1);
-			args_size += strlen(str) + 1;
-
-			while (args_size % 4 != 0)
-			{
-				args[args_size++] = 0;
-			}
-
+			buf_append(&args, str, strlen(str) + 1);
+			buf_zalign(&args, 4);
 			break;
 
 		default:
@@ -66,13 +49,13 @@ size_t osc_encode(unsigned char *buf, const char *addr, ...)
 done:
 	va_end(ap);
 
-	tag[tag_size++] = 0;
-	while (tag_size % 4 != 0)
-	{
-		tag[tag_size++] = 0;
-	}
-	memcpy(&buf[addr_size], tag, tag_size);
-	memcpy(&buf[addr_size + tag_size], args, args_size);
+	unsigned char zero = 0;
+	buf_append(&tag, &zero, 1);
+	buf_zalign(&tag, 4);
 
-	return addr_size + tag_size + args_size;
+	buf_append(buf, tag.data, tag.size);
+	buf_append(buf, args.data, args.size);
+
+	buf_free(&tag);
+	buf_free(&args);
 }

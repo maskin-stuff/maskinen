@@ -5,7 +5,8 @@
 
 #include "udp.h"
 
-struct udp_sock {
+struct udp_sock
+{
 	int fd;
 	struct sockaddr_in addr;
 };
@@ -49,11 +50,11 @@ void udp_free(struct udp_sock *us)
 	free(us);
 }
 
-int udp_send(struct udp_sock *us, const unsigned char *buf, size_t size)
+int udp_send(struct udp_sock *us, const struct buf *buf)
 {
 	struct sockaddr *addrptr = (struct sockaddr *) &us->addr;
 
-	if (sendto(us->fd, buf, size, 0, addrptr, sizeof us->addr) < 0)
+	if (sendto(us->fd, buf->data, buf->size, 0, addrptr, sizeof us->addr) < 0)
 	{
 		perror("sendto()");
 		return -1;

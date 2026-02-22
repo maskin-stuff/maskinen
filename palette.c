@@ -3,7 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "chords.h"
+#include "palette.h"
 
 static char *read_file(const char *path)
 {
@@ -40,34 +40,34 @@ static int *parse_line(char *line)
 	char *word;
 	char *save_ptr;
 
-	int *chord = NULL;
+	int *keys = NULL;
 	int size = 0;
 
 	while (word = strtok_r(ptr, " ", &save_ptr))
 	{
 		size++;
-		chord = realloc(chord, size * sizeof *chord);
+		keys = realloc(keys, size * sizeof *keys);
 
 		errno = 0;
-		chord[size - 1] = strtol(word, NULL, 10);
+		keys[size - 1] = strtol(word, NULL, 10);
 
 		if (errno != 0)
 		{
 			perror("strtol()");
-			free(chord);
+			free(keys);
 			return NULL;
 		}
 
 		ptr = NULL;
 	}
 
-	chord = realloc(chord, (size + 1) * sizeof *chord);
-	chord[size] = -1;
+	keys = realloc(keys, (size + 1) * sizeof *keys);
+	keys[size] = -1;
 
-	return chord;
+	return keys;
 }
 
-int **parse_chords(const char *path)
+int **parse_palette(const char *path)
 {
 	char *data = read_file(path);
 	if (data == NULL)
@@ -79,17 +79,17 @@ int **parse_chords(const char *path)
 	char *line;
 	char *save_ptr;
 
-	int **chords = NULL;
-	int nchords = 0;
+	int **palette = NULL;
+	int num = 0;
 
 	while (line = strtok_r(ptr, "\n", &save_ptr))
 	{
-		nchords++;
-		chords = realloc(chords, nchords * sizeof *chords);
+		num++;
+		palette = realloc(palette, num * sizeof *palette);
 
-		if ((chords[nchords - 1] = parse_line(line)) == NULL)
+		if ((palette[num - 1] = parse_line(line)) == NULL)
 		{
-			free_chords(chords);
+			free_palette(palette);
 			free(data);
 			return NULL;
 		}
@@ -97,13 +97,13 @@ int **parse_chords(const char *path)
 		ptr = NULL;
 	}
 
-	chords = realloc(chords, (nchords + 1) * sizeof *chords);
-	chords[nchords] = NULL;
+	palette = realloc(palette, (num + 1) * sizeof *palette);
+	palette[num] = NULL;
 
-	return chords;
+	return palette;
 }
 
-void free_chords(int **chords)
+void free_palette(int **chords)
 {
 	for (int **ptr = chords; *ptr; ptr++)
 	{
