@@ -1,10 +1,10 @@
-CFLAGS	:=	$(shell pkg-config --cflags jack) -MMD -O0 -g -Wno-cpp
-LDFLAGS	:=	$(shell pkg-config --libs jack) -lm
+CFLAGS	:=	-MMD -O0 -g -Wno-cpp
+LDFLAGS	:=	-lm
 SOURCES	:=	$(wildcard *.c)
 OBJECTS	:=	$(SOURCES:%.c=%.o)
 DEPENDS	:=	$(SOURCES:%.c=%.d)
 
-maskin: $(OBJECTS)
+maskinen: $(OBJECTS)
 	@printf "CCLD\t%s\n" $(@)
 	@$(CC) $(LDFLAGS) -o $(@) $(^)
 
@@ -15,6 +15,6 @@ maskin: $(OBJECTS)
 	@$(CC) $(CFLAGS) -o $(@) -c $(<)
 
 clean:
-	rm -rf *.o *.d maskin
+	rm -rf *.o *.d maskinen
 
 .PHONY: clean
