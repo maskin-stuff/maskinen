@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "it.h"
 #include "buf.h"
 #include "udp.h"
 #include "osc.h"
@@ -31,4 +32,13 @@ int main(int argc, char **argv)
 	buf_append1(&buf, 0);
 
 	printf("%s\n", (const char *) buf.data);
+	printf("\n");
+
+	struct it *it = it_init(&buf);
+	struct it_value itv;
+
+	while ((itv = it_next(it)).word)
+	{
+		printf("%-20s%d\n", itv.word, itv.sylls);
+	}
 }

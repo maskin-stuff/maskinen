@@ -50,3 +50,41 @@ void buf_zalign(struct buf *buf, size_t align)
 		buf_append(buf, &zero, 1);
 	}
 }
+
+char *buf_strdup(const struct buf *buf)
+{
+	char *ptr = malloc(buf->size + 1);
+	memcpy(ptr, buf->data, buf->size);
+	ptr[buf->size] = 0;
+	return ptr;
+}
+
+void buf_pushi(struct buf *buf, int i)
+{
+	buf_append(buf, &i, sizeof(int));
+}
+
+int buf_geti(const struct buf *buf, size_t i)
+{
+	return *(int*) buf->data + i * sizeof(int);
+}
+
+size_t buf_numi(const struct buf *buf)
+{
+	return buf->size / sizeof(int);
+}
+
+void buf_pushp(struct buf *buf, void *p)
+{
+	buf_append(buf, &p, sizeof(void*));
+}
+
+void *buf_getp(const struct buf *buf, size_t i)
+{
+	return *(void**) buf->data + i * sizeof(void*);
+}
+
+size_t buf_nump(const struct buf *buf)
+{
+	return buf->size / sizeof(void*);
+}

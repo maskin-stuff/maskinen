@@ -16,5 +16,12 @@ void buf_append1(struct buf *buf, unsigned char x);
 void buf_free(struct buf *buf);
 void buf_reset(struct buf *buf);
 void buf_zalign(struct buf *buf, size_t align);
+char *buf_strdup(const struct buf *buf);
+void buf_pushi(struct buf *buf, int i);
+int buf_geti(const struct buf *buf, size_t i);
+size_t buf_numi(const struct buf *buf);
+void buf_pushp(struct buf *buf, void *p);
+void *buf_getp(const struct buf *buf, size_t i);
+size_t buf_nump(const struct buf *buf);
 
 #endif

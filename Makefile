@@ -5,12 +5,14 @@ OBJECTS	:=	$(SOURCES:%.c=%.o)
 DEPENDS	:=	$(SOURCES:%.c=%.d)
 
 maskin: $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $(@) $(^)
+	@printf "CCLD\t%s\n" $(@)
+	@$(CC) $(LDFLAGS) -o $(@) $(^)
 
 -include $(DEPENDS)
 
 .c.o:
-	$(CC) $(CFLAGS) -o $(@) -c $(<)
+	@printf "CC\t%s\n" $(@)
+	@$(CC) $(CFLAGS) -o $(@) -c $(<)
 
 clean:
 	rm -rf *.o *.d maskin
