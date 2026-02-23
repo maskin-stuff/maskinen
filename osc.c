@@ -10,7 +10,7 @@ void osc_encode(struct buf *buf, const char *addr, ...)
 	struct buf tag = buf_init();
 	struct buf args = buf_init();
 
-	buf_append(&tag, ",", 1);
+	buf_append1(&tag, ',');
 	buf_append(buf, addr, strlen(addr) + 1);
 	buf_zalign(buf, 4);
 
@@ -29,13 +29,13 @@ void osc_encode(struct buf *buf, const char *addr, ...)
 			goto done;
 
 		case OSC_INTEGER:
-			buf_append(&tag, "i", 1);
+			buf_append1(&tag, 'i');
 			num = htonl(va_arg(ap, int));
 			buf_append(&args, &num, sizeof num);
 			break;
 
 		case OSC_STRING:
-			buf_append(&tag, "s", 1);
+			buf_append1(&tag, 's');
 			str = va_arg(ap, const char *);
 			buf_append(&args, str, strlen(str) + 1);
 			buf_zalign(&args, 4);

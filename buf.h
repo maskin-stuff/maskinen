@@ -2,6 +2,7 @@
 #define BUF_H
 
 #include <stddef.h>
+#include <stdio.h>
 
 struct buf
 {
@@ -23,5 +24,6 @@ size_t buf_numi(const struct buf *buf);
 void buf_pushp(struct buf *buf, void *p);
 void *buf_getp(const struct buf *buf, size_t i);
 size_t buf_nump(const struct buf *buf);
+int buf_readall(struct buf *buf, FILE *f);
 
 #endif

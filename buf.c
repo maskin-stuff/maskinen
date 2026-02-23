@@ -88,3 +88,15 @@ size_t buf_nump(const struct buf *buf)
 {
 	return buf->size / sizeof(void*);
 }
+
+int buf_readall(struct buf *buf, FILE *f)
+{
+	int c;
+
+	while ((c = fgetc(f)) != EOF)
+	{
+		buf_append1(buf, c);
+	}
+
+	return 0;
+}
